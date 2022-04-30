@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import random
 from os import path
+from analyzer import TwitAnalysis
 from wordcloud import WordCloud
 import numpy as np
 
@@ -17,26 +18,22 @@ def random_color_func(word=None, font_size=None, position=None,  orientation=Non
 
 
 # Generate noun cloud
-def noun_cloud():
-
-    # REFACTOR
-    text = open('nouns.txt').read()
-
+def noun_cloud(anal: TwitAnalysis, path_out):
     wordcloud = WordCloud(background_color='white',
                           max_font_size=50,
                           width=595,
                           height=842,
                           repeat=True,
                           color_func=random_color_func
-                          ).generate(text)
+                          ).generate_from_frequencies(anal.mostUsedNouns)
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
-    plt.savefig('nouns.png', dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.savefig(path_out, dpi=300, bbox_inches='tight', pad_inches=0)
 
 # Generate verb bar chart
 
 
-def verb_bar():
+def verb_bar(anal: TwitAnalysis, path_out):
     verbs = []
     values = []
 
@@ -48,12 +45,7 @@ def verb_bar():
             values.append(temp[1])
 
     fig1, ax1 = plt.subplots()
-    ax1.pie(values, labels=verbs,
+    ax1.pie(anal.mostUsedVerbs.values(), labels=anal.mostUsedVerbs.keys(),
             startangle=90)
     ax1.axis('equal')
-    plt.savefig('verbs.png', dpi=300, bbox_inches='tight', pad_inches=0)
-
-
-if __name__ == '__main__':
-    noun_cloud()
-    verb_bar()
+    plt.savefig(path_out, dpi=300, bbox_inches='tight', pad_inches=0)
