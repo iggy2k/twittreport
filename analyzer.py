@@ -158,11 +158,15 @@ class TwitAnalysis:
     mostUsedVerbs: dict[str, int]
     mostUsedNouns: dict[str, int]
     mostUsedStructs: dict[str, int]
+    mentions: dict[str, int]
+    tags: dict[str, int]
 
     def __init__(self) -> None:
         self.mostUsedVerbs = {}
         self.mostUsedNouns = {}
         self.mostUsedStructs = {}
+        self.mentions = {}
+        self.tags = {}
 
 
 def analysis():
@@ -204,5 +208,14 @@ def analysis():
 
     for struct in list(structures)[:10]:
         anal.mostUsedStructs[struct] = structures[struct]
+
+    # Analyze mentions, hashtags
+    full_words = full_text.split()
+    for word in full_words:
+        if word:
+            if word[0] == '@':
+                anal.mentions[word] = anal.mentions.get(word, 0) + 1
+            elif word[0] == '#':
+                anal.tags[word] = anal.tags.get(word, 0) + 1
 
     return anal
