@@ -60,14 +60,15 @@ def getStructures(sentences):
     structures = {}
     STRUCT_MAX_LEN = 5
     nlp = spacy.load("en_core_web_sm")
-    for sentence in sentences:
+    sen_len = len(sentences)
+    for i, sentence in enumerate(sentences):
         struct = ''
         nlp_sent = nlp(sentence)
         for token in nlp_sent[:min(STRUCT_MAX_LEN, len(nlp_sent))]:
             if token.pos_ in UPOS:
-                struct += UPOS[token.pos_] + ' + '
+                struct += UPOS[token.pos_] + ' + ' * (i != sen_len - 1)
             else:
-                struct += UPOS['X'] + ' + '
+                struct += UPOS['X'] + ' + ' * (i != sen_len - 1)
         if not struct in structures:
             structures[struct] = 1
         else:
@@ -116,7 +117,6 @@ if __name__ == '__main__':
     # Set max length to avoid exception
     doc = nlp(full_text[: 1000000])
 
-
     # Analyze syntax (boilerplate)
     noun_arr = [chunk.text for chunk in doc.noun_chunks]
     verb_arr = [token.lemma_ for token in doc if token.pos_ == "VERB"]
@@ -136,12 +136,12 @@ if __name__ == '__main__':
         str(aveSentLen(sentences)), str(aveSentWords(sentences))))
 
     out.write("Most used verbs\n")
-    for top_verb in list(verbs)[:10]:
+    for top_verb in list(verbs)[:20]:
         out.write("{},{}\n".format(
             top_verb, verbs[top_verb]))
 
     out.write("Most used nouns\n")
-    for top_noun in list(nouns)[:10]:
+    for top_noun in list(nouns)[:20]:
         out.write("{},{}\n".format(
             top_noun, nouns[top_noun]))
 
@@ -149,6 +149,7 @@ if __name__ == '__main__':
     for struct in list(structures)[:10]:
         out.write("{},{}\n".format(
             struct, structures[struct]))
+
 
 @dataclass
 class TwitAnalysis:
@@ -181,7 +182,6 @@ def analysis():
     nlp = spacy.load("en_core_web_sm")
     # Set max length to avoid exception
     doc = nlp(full_text[: 1000000])
-
 
     # Analyze syntax (boilerplate)
     noun_arr = [chunk.text for chunk in doc.noun_chunks]
