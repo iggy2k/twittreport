@@ -1,6 +1,7 @@
 import sys
 import os
 import twint
+import urllib.request
 
 if len(sys.argv) != 2:
     print("Invalid number of arguments")
@@ -15,7 +16,7 @@ c.Username = sys.argv[1]
 # c.Search = input("Filter word: ")
 c.Output = "raw_tweets.txt"
 
-# Silent run
+# Silent
 c.Hide_output = True
 
 # Run
@@ -30,3 +31,13 @@ with open('raw_tweets.txt', encoding="utf8") as fin, open('clean.txt', 'a', enco
         os.system('cls')
         print("Processing tweet {}".format(count))
 print('Total tweets: ' + str(count))
+
+
+# Get avatar
+
+c.Format = "{avatar}"
+c.Output = "avatar.txt"
+twint.run.Lookup(c)
+
+f = open("avatar.txt", "r")
+urllib.request.urlretrieve(f.readline(), "avatar.jpg")
