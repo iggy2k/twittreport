@@ -10,6 +10,10 @@ from datetime import date
 from graphics import noun_cloud, verb_bar
 
 
+def sanitize_tex(s):
+    return s.replace('#', r'\#').replace('_', r'\_')
+
+
 def render(template_vars, pdf_out_path):
     '''Render the template and export it to a pdf. Assumes any images already exist.'''
     mentions = ''
@@ -19,7 +23,7 @@ def render(template_vars, pdf_out_path):
     if template_vars['top_mentions']:
         mentions = (
             r'''\begin{enumerate}'''
-            + '\n'.join(r'\item %s (%d)' % mention
+            + '\n'.join(r'\item \href{https://twitter.com/%s}{%s} (%d)' % (mention[0], sanitize_tex(mention[0]), mention[1])
                         for mention in template_vars['top_mentions'])
             + r'\end{enumerate}'
         )
@@ -30,7 +34,7 @@ def render(template_vars, pdf_out_path):
         tags = (
             r'''\begin{enumerate}
             '''
-            + '\n'.join(r'\item %s (%d)' % tag
+            + '\n'.join(r'\item \href{https://twitter.com/%s}{%s} (%d)' % (tag[0][1:], sanitize_tex(tag[0]), tag[1])
                         for tag in template_vars['top_tags'])
             + r'\end{enumerate}'
         )
@@ -67,7 +71,7 @@ def render(template_vars, pdf_out_path):
     os.system(f'pdflatex {pdf_out_path[:-4]}.tex')
 
 
-def main():
+def main(name):
     anal = analysis()
     today = date.today()
 
@@ -88,7 +92,7 @@ def main():
         most_structs.append((k, anal.mostUsedStructs[k]))
 
     template_vars = {
-        'name': 'profile name here',
+        'name': name,
         'top_mentions': most_mentions,
         'top_tags': most_tags,
         'top_structs': most_structs,
