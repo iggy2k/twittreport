@@ -44,7 +44,8 @@ def main(name_from_gui=None):
     twint.run.Lookup(c)
 
     f = open("avatar.txt", "r")
-    urllib.request.urlretrieve(f.readline(), "avatar.jpg")
+    url = f.readline()
+    urllib.request.urlretrieve(url.replace("normal", "400x400"), "avatar.jpg")
     return
 
 
