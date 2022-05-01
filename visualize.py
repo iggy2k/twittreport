@@ -27,7 +27,6 @@ def render(template_vars, pdf_out_path):
 def main():
     anal = analysis()
     today = date.today()
-    print(anal)
 
     noun_cloud(anal, 'noun.png')
     verb_bar(anal, 'verb.png')
