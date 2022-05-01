@@ -1,5 +1,7 @@
+@@ -1,42 +0,0 @@
 <!DOCTYPE html>
 <html>
+
 <head lang="en">
     <meta charset="UTF-8">
     <title>{{ title }}</title>
@@ -32,11 +34,12 @@
     <h3>Top 5 Hashtags</h3>
     <ol>
         {% for tag in top_tags %}
-            <li>
-                <a href="https://twitter.com/search?q=%23{{ tag[0][1:] }}">{{ tag[0] }}</a>, {{ tag[1] }}.
-            </li>
+        <li>
+            <a href="https://twitter.com/search?q=%23{{ tag[0][1:] }}">{{ tag[0] }}</a>, {{ tag[1] }}.
+        </li>
         {% endfor %}
     </ol>
     {% endif %}
 </body>
+
 </html>
