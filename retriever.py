@@ -3,41 +3,50 @@ import os
 import twint
 import urllib.request
 
-if len(sys.argv) != 2:
-    print("Invalid number of arguments")
-    exit()
 
-# Configure
-c = twint.Config()
+def main(name_from_gui=None):
+    if len(sys.argv) != 2 and name_from_gui is None:
+        print("Invalid number of arguments")
+        exit()
 
-c.Username = sys.argv[1]
+    # Configure
+    c = twint.Config()
 
-# Optional for accounts with tons of tweets
-# c.Search = input("Filter word: ")
-c.Output = "raw_tweets.txt"
+    if len(sys.argv) != 2:
+        c.Username = name_from_gui
+    else:
+        c.Username = sys.argv[1]
 
-# Silent
-c.Hide_output = True
+    # Optional for accounts with tons of tweets
+    # c.Search = input("Filter word: ")
+    c.Output = "raw_tweets.txt"
 
-# Run
-twint.run.Search(c)
+    # Silent
+    c.Hide_output = True
 
-# Clean tweet data
-count = 0
-with open('raw_tweets.txt', encoding="utf8") as fin, open('clean.txt', 'a', encoding="utf8") as fout:
-    for line in fin:
-        count += 1
-        fout.writelines(line[57:])
-        os.system('cls')
-        print("Processing tweet {}".format(count))
-print('Total tweets: ' + str(count))
+    # Run
+    twint.run.Search(c)
+
+    # Clean tweet data
+    count = 0
+    with open('raw_tweets.txt', encoding="utf8") as fin, open('clean.txt', 'a', encoding="utf8") as fout:
+        for line in fin:
+            count += 1
+            fout.writelines(line[57:])
+            os.system('cls')
+            print("Processing tweet {}".format(count))
+    print('Total tweets: ' + str(count))
+
+    # Get avatar
+
+    c.Format = "{avatar}"
+    c.Output = "avatar.txt"
+    twint.run.Lookup(c)
+
+    f = open("avatar.txt", "r")
+    urllib.request.urlretrieve(f.readline(), "avatar.jpg")
+    return
 
 
-# Get avatar
-
-c.Format = "{avatar}"
-c.Output = "avatar.txt"
-twint.run.Lookup(c)
-
-f = open("avatar.txt", "r")
-urllib.request.urlretrieve(f.readline(), "avatar.jpg")
+if __name__ == '__main__':
+    main()

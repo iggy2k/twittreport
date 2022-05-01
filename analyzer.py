@@ -125,7 +125,7 @@ if __name__ == '__main__':
     verbs = organizeVerbs(verb_arr)
     structures = getStructures(sentences)
 
-    out = open('analyzed.csv', 'w')
+    out = open('analyzed.csv', 'w', encoding="utf8")
 
     out.write("Total tweets,{}\n".format(
         str(sum(1 for line in open('clean.txt', encoding="utf8")))))

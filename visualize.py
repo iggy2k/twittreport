@@ -1,29 +1,15 @@
 from analyzer import TwitAnalysis, analysis
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import date
+
 
 from graphics import noun_cloud, verb_bar
 
 
-def render(template_vars, pdf_out_path):
-    '''Render the template and export it to a pdf. Assumes any images already exist.'''
-    from weasyprint import HTML
-    import os
-    from jinja2 import Environment, FileSystemLoader
-    env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('template.html')
-
-    html_out = template.render(template_vars)
-
-    with open('html_out.html', 'w') as fout:
-        fout.write(html_out)
-
-    HTML(string=html_out, base_url=os.path.join(
-        os.path.abspath(os.getcwd()), '')).write_pdf(pdf_out_path)
-
-
-if __name__ == '__main__':
+def main():
     anal = analysis()
+    today = date.today()
     print(anal)
 
     noun_cloud(anal, 'noun.png')
@@ -49,4 +35,25 @@ if __name__ == '__main__':
         'top_tags': most_tags,
     }
 
-    render(template_vars, 'report.pdf')
+    render(template_vars, 'report-{}.pdf'.format(today.strftime("%b-%d-%Y")))
+
+
+def render(template_vars, pdf_out_path):
+    '''Render the template and export it to a pdf. Assumes any images already exist.'''
+    from weasyprint import HTML
+    import os
+    from jinja2 import Environment, FileSystemLoader
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template('template.html')
+
+    html_out = template.render(template_vars)
+
+    with open('html_out.html', 'w') as fout:
+        fout.write(html_out)
+
+    HTML(string=html_out, base_url=os.path.join(
+        os.path.abspath(os.getcwd()), '')).write_pdf(pdf_out_path)
+
+
+if __name__ == '__main__':
+    main()

@@ -1,4 +1,9 @@
+from __future__ import annotations
+import os
 import tkinter as tk
+import retriever
+import visualize
+import cleaner
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import Progressbar
@@ -8,6 +13,7 @@ class App(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        self.username = None
         self.setup()
 
     def setup(self):
@@ -20,7 +26,7 @@ class App(tk.Frame):
 
         self.parent.iconbitmap('icon.ico')
 
-        self.parent.geometry('300x400')
+        self.parent.geometry('300x300')
 
         self.parent.resizable(False, False)
 
@@ -48,12 +54,25 @@ class App(tk.Frame):
         self.label_validator.pack()
 
         self.button_gen = tk.Button(
-            self.parent, text="Generate Report", command=None)
+            self.parent, text="Generate Report", command=self.generate)
         self.button_gen.pack(pady=(40, 0))
 
         self.bar = Progressbar(self.parent, length=200,
                                style='black.Horizontal.TProgressbar')
         self.bar.pack()
+
+    def generate(self):
+        self.bar['value'] += 25
+        self.update()
+        retriever.main(self.txt.get())
+        self.bar['value'] += 25
+        self.update()
+        obj = visualize.main()
+        self.bar['value'] += 25
+        self.update()
+        cleaner.clean()
+        self.bar['value'] += 25
+        self.update()
 
 
 if __name__ == '__main__':
