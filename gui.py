@@ -19,6 +19,8 @@ class App(tk.Frame):
     def setup(self):
         self.parent.title("TwittReport GUI")
 
+        self.parent.protocol("WM_DELETE_WINDOW", self.close)
+
         # Theme by rdbende
         # https://github.com/rdbende/Forest-ttk-theme
         self.tk.call('source', 'forest-dark.tcl')
@@ -60,6 +62,10 @@ class App(tk.Frame):
         self.label_warning = tk.Label(
             self.parent, text="This program is single-threaded, spam-clicking while it is busy can freeze it.", wraplength=300)
         self.label_warning.pack(pady=(10, 0))
+
+    def close(self):
+        self.parent.destroy()
+        exit()
 
     def generate(self):
         if self.txt.get() == "":
