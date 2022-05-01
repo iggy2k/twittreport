@@ -79,7 +79,7 @@ class App(tk.Frame):
             self.label_validator['text'] = "Processing tweets..."
             self.bar['value'] += 25
             self.update()
-            result = visualize.main()
+            result = visualize.main(self.txt.get())
             self.label_validator['text'] = "Cleaning up..."
             self.bar['value'] += 25
             self.update()

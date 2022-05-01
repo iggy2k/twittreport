@@ -146,7 +146,7 @@ if __name__ == '__main__':
             top_noun, nouns[top_noun]))
 
     out.write("Most used sentence structures\n")
-    for struct in list(structures)[:10]:
+    for struct in list(structures)[:5]:
         out.write("{},{}\n".format(
             struct, structures[struct]))
 
@@ -195,27 +195,28 @@ def analysis():
     verbs = organizeVerbs(verb_arr)
     structures = getStructures(sentences)
 
-    anal = TwitAnalysis()
-    anal.totalTweets = sum(1 for line in open('clean.txt', encoding="utf8"))
-    anal.totalSentences = len(sentences)
-    anal.avgSentenceLen = (aveSentLen(sentences), aveSentWords(sentences))
+    analysis = TwitAnalysis()
+    analysis.totalTweets = sum(
+        1 for line in open('clean.txt', encoding="utf8"))
+    analysis.totalSentences = len(sentences)
+    analysis.avgSentenceLen = (aveSentLen(sentences), aveSentWords(sentences))
 
-    for top_verb in list(verbs)[:10]:
-        anal.mostUsedVerbs[top_verb] = verbs[top_verb]
+    for top_verb in list(verbs)[:20]:
+        analysis.mostUsedVerbs[top_verb] = verbs[top_verb]
 
-    for top_noun in list(verbs)[:10]:
-        anal.mostUsedNouns[top_noun] = verbs[top_noun]
+    for top_noun in list(nouns)[:30]:
+        analysis.mostUsedNouns[top_noun] = nouns[top_noun]
 
-    for struct in list(structures)[:10]:
-        anal.mostUsedStructs[struct] = structures[struct]
+    for struct in list(structures)[:5]:
+        analysis.mostUsedStructs[struct] = structures[struct]
 
     # Analyze mentions, hashtags
     full_words = full_text.split()
     for word in full_words:
         if word:
             if word[0] == '@':
-                anal.mentions[word] = anal.mentions.get(word, 0) + 1
+                analysis.mentions[word] = analysis.mentions.get(word, 0) + 1
             elif word[0] == '#':
-                anal.tags[word] = anal.tags.get(word, 0) + 1
+                analysis.tags[word] = analysis.tags.get(word, 0) + 1
 
-    return anal
+    return analysis
