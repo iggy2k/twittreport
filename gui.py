@@ -26,7 +26,7 @@ class App(tk.Frame):
 
         self.parent.iconbitmap('icon.ico')
 
-        self.parent.geometry('300x300')
+        self.parent.geometry('300x250')
 
         self.parent.resizable(False, False)
 
@@ -40,14 +40,10 @@ class App(tk.Frame):
         self.parent.geometry('+%d+%d' % (x, y))
 
         self.label = tk.Label(self.parent, text="Enter twitter username")
-        self.label.pack(pady=(20, 20))
+        self.label.pack(pady=(20, 5))
 
         self.txt = tk.Entry(self.parent, width=15)
         self.txt.pack()
-
-        self.button = tk.Button(
-            self.parent, text="Enter", width=10, command=None)
-        self.button.pack(pady=(10, 0))
 
         self.label_validator = tk.Label(
             self.parent, text="No username entered")
@@ -55,11 +51,15 @@ class App(tk.Frame):
 
         self.button_gen = tk.Button(
             self.parent, text="Generate Report", command=self.generate)
-        self.button_gen.pack(pady=(40, 0))
+        self.button_gen.pack(pady=(20, 20))
 
         self.bar = Progressbar(self.parent, length=200,
                                style='black.Horizontal.TProgressbar')
         self.bar.pack()
+
+        self.label_warning = tk.Label(
+            self.parent, text="This program is single-threaded, spam-clicking while it is busy can freeze it.", wraplength=300)
+        self.label_warning.pack(pady=(10, 0))
 
     def generate(self):
         self.bar['value'] += 25
@@ -67,12 +67,14 @@ class App(tk.Frame):
         retriever.main(self.txt.get())
         self.bar['value'] += 25
         self.update()
-        obj = visualize.main()
+        result = visualize.main()
         self.bar['value'] += 25
         self.update()
         cleaner.clean()
         self.bar['value'] += 25
         self.update()
+        tk.messagebox.showinfo(title="TwittReport",
+                               message="Report saved as {}".format(result))
 
 
 if __name__ == '__main__':
