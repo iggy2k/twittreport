@@ -1,3 +1,6 @@
+import os
+from re import template
+import subprocess
 from analyzer import TwitAnalysis, analysis
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,19 +12,59 @@ from graphics import noun_cloud, verb_bar
 
 def render(template_vars, pdf_out_path):
     '''Render the template and export it to a pdf. Assumes any images already exist.'''
-    from weasyprint import HTML
-    import os
-    from jinja2 import Environment, FileSystemLoader
-    env = Environment(loader=FileSystemLoader('.'))
-    template = env.get_template('template.html')
+    mentions = ''
+    tags = ''
+    structs = ''
 
-    html_out = template.render(template_vars)
+    if template_vars['top_mentions']:
+        mentions = (
+            r'''\begin{enumerate}'''
+            + '\n'.join(r'\item %s (%d)' % mention
+                        for mention in template_vars['top_mentions'])
+            + r'\end{enumerate}'
+        )
+    else:
+        mentions = 'This user has never mentioned anyone.'
 
-    with open('html_out.html', 'w') as fout:
-        fout.write(html_out)
+    if template_vars['top_tags']:
+        tags = (
+            r'''\begin{enumerate}
+            '''
+            + '\n'.join(r'\item %s (%d)' % tag
+                        for tag in template_vars['top_tags'])
+            + r'\end{enumerate}'
+        )
+    else:
+        tags = 'This user has never tweeted any hashtags.'
 
-    HTML(string=html_out, base_url=os.path.join(
-        os.path.abspath(os.getcwd()), '')).write_pdf(pdf_out_path)
+    if template_vars['top_structs']:
+        structs = (
+            r'''\begin{enumerate}
+            '''
+            + '\n'.join(r'\item %s (%d)' % struct
+                        for struct in template_vars['top_structs'])
+            + r'\end{enumerate}'
+        )
+    else:
+        structs = 'This user has no text tweets.'
+
+    tex_template = ''
+
+    with open('latex.tex') as fin:
+        tex_template = fin.read()
+
+    tex_template = tex_template.replace(
+        '@USERNAME', template_vars['name']).replace(
+        '@MENTIONS', mentions).replace(
+            '@HASHTAGS', tags).replace(
+                '@STRUCTURES', structs)
+
+    with open(f'{pdf_out_path[:-4]}.tex', 'w') as fout:
+        fout.write(tex_template)
+
+    # proc = subprocess.Popen(['pdflatex', f'{pdf_out_path}.tex'])
+    # proc.communicate()
+    os.system(f'pdflatex {pdf_out_path[:-4]}.tex')
 
 
 def main():
@@ -33,6 +76,7 @@ def main():
 
     most_mentions = []
     most_tags = []
+    most_structs = []
 
     for k in sorted(anal.mentions, key=anal.mentions.get, reverse=True)[:5]:
         most_mentions.append((k, anal.mentions[k]))
@@ -40,15 +84,14 @@ def main():
     for k in sorted(anal.tags, key=anal.tags.get, reverse=True)[:5]:
         most_tags.append((k, anal.tags[k]))
 
+    for k in sorted(anal.mostUsedStructs, key=anal.mostUsedStructs.get, reverse=True):
+        most_structs.append((k, anal.mostUsedStructs[k]))
+
     template_vars = {
-        'title': 'Test title',
         'name': 'profile name here',
-        'img_logo': 'logo 512.png',
-        'img_pfp': 'avatar.jpg',
-        'img_nouns': 'noun.png',
-        'img_verb': 'verb.png',
         'top_mentions': most_mentions,
         'top_tags': most_tags,
+        'top_structs': most_structs,
     }
     time = today.strftime("%b-%d-%Y")
     render(template_vars, 'report-{}.pdf'.format(time))

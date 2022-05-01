@@ -19,6 +19,9 @@ def random_color_func(word=None, font_size=None, position=None,  orientation=Non
 
 # Generate noun cloud
 def noun_cloud(anal: TwitAnalysis, path_out):
+    freq = anal.mostUsedNouns
+    if len(freq) == 0:
+        freq = {'-': 1}
     wordcloud = WordCloud(background_color='white',
                           max_font_size=50,
                           width=595,
