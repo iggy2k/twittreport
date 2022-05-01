@@ -5,7 +5,7 @@ def clean():
     directory = os.listdir(".")
     print("Removing temporary files...")
     for item in directory:
-        if item.endswith((".txt", ".csv", ".jpg", ".html", ".png")) and item != "logo 512.png":
+        if item.endswith((".txt", ".csv", ".jpg", ".png")) and item != "logo 512.png":
             os.remove(item)
 
 
