@@ -46,7 +46,7 @@ class App(tk.Frame):
         self.txt.pack()
 
         self.label_validator = tk.Label(
-            self.parent, text="No username entered")
+            self.parent, text="...")
         self.label_validator.pack()
 
         self.button_gen = tk.Button(
@@ -62,19 +62,33 @@ class App(tk.Frame):
         self.label_warning.pack(pady=(10, 0))
 
     def generate(self):
-        self.bar['value'] += 25
-        self.update()
-        retriever.main(self.txt.get())
-        self.bar['value'] += 25
-        self.update()
-        result = visualize.main()
-        self.bar['value'] += 25
-        self.update()
-        cleaner.clean()
-        self.bar['value'] += 25
-        self.update()
-        tk.messagebox.showinfo(title="TwittReport",
-                               message="Report saved as {}".format(result))
+        if self.txt.get() == "":
+            self.label_validator['text'] = "No username entered!"
+            return 1
+        try:
+            self.label_validator['text'] = "Retrieving tweets..."
+            self.bar['value'] += 25
+            self.update()
+            retriever.main(self.txt.get())
+            self.label_validator['text'] = "Processing tweets..."
+            self.bar['value'] += 25
+            self.update()
+            result = visualize.main()
+            self.label_validator['text'] = "Cleaning up..."
+            self.bar['value'] += 25
+            self.update()
+            cleaner.clean()
+            self.label_validator['text'] = "Done!"
+            self.bar['value'] += 25
+            self.update()
+            tk.messagebox.showinfo(title="TwittReport",
+                                   message="Report saved as {}".format(result))
+        except Exception:
+            print("Something went wrong!")
+        finally:
+            self.bar['value'] = 0
+            self.update()
+            cleaner.clean()
 
 
 if __name__ == '__main__':
