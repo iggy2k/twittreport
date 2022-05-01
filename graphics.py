@@ -34,16 +34,6 @@ def noun_cloud(anal: TwitAnalysis, path_out):
 
 
 def verb_bar(anal: TwitAnalysis, path_out):
-    verbs = []
-    values = []
-
-    # TO BE REFACTORED
-    for i, line in enumerate((list(open("analyzed.csv")))):
-        if 4 < i < 14:
-            temp = line.split(',')
-            verbs.append(temp[0])
-            values.append(temp[1])
-
     fig1, ax1 = plt.subplots()
     ax1.pie(anal.mostUsedVerbs.values(), labels=anal.mostUsedVerbs.keys(),
             startangle=90)
